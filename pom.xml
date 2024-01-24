@@ -15,7 +15,7 @@
     <quarkus.platform.version>3.5.0</quarkus.platform.version>
     <skipITs>true</skipITs>
     <surefire-plugin.version>3.1.2</surefire-plugin.version>
-    <langchain4j.version>0.23.0</langchain4j.version>
+    <langchain4j.version>0.25.0</langchain4j.version>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -54,6 +54,7 @@
       <artifactId>langchain4j</artifactId>
       <version>${langchain4j.version}</version>
     </dependency>
+
     <dependency>
       <groupId>dev.langchain4j</groupId>
       <artifactId>langchain4j-open-ai</artifactId>
@@ -64,6 +65,7 @@
       <artifactId>langchain4j-embeddings-all-minilm-l6-v2</artifactId>
       <version>${langchain4j.version}</version>
     </dependency>
+
 
     <dependency>
       <groupId>io.quarkus</groupId>
