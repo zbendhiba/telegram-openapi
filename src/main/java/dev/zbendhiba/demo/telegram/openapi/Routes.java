@@ -35,11 +35,13 @@ public class Routes extends RouteBuilder {
     public void configure() throws Exception {
         // REST endpoint to add a bio
         rest("data")
-                .post("/ingest/")
-                .to("direct:ingest");
+                .post("/camel-split-ingest/")
+                .to("direct:camel-split-ingest")
+                .post("/langchain4j-split-ingest/")
+                .to("direct:langchain4j-split-ingest");
 
         // Ingest Data
-        from("direct:ingest")
+        from("direct:camel-split-ingest")
                 .wireTap("direct:processBio")
                 .transform().simple("Thanks");
 
@@ -48,14 +50,24 @@ public class Routes extends RouteBuilder {
             .split(body().tokenize("\\s*\\n\\s*\\n"))
                 .setHeader("paragraphNumber", simple("${exchangeProperty.CamelSplitIndex}"))
                 // Process each paragraph using the OpenAiTokenizerProcessor
-                .process(new OpenAiTokenizerProcessor())
-                .to("direct:processTokenizedPart").end();
+                .process(new CamelSplitterProcessor())
+                .to("direct:processTokenizedPart")
+                .end();
 
         // Embed paragraphs into Vector Database
         from("direct:processTokenizedPart")
                 .process(exchange -> {
                     embed(exchange.getIn().getBody(List.class));
                 });
+
+
+        from("direct:process-langchain4j-split-ingest")
+                .process(new LangchainSplitterProcessor())
+                .to("direct:processTokenizedPart");
+
+        from("direct:langchain4j-split-ingest")
+                .wireTap("direct:process-langchain4j-split-ingest")
+                .transform().simple("Thanks");
 
 
         ChatLanguageModel model = OpenAiChatModel.builder()

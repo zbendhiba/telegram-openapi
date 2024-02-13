@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class OpenAiTokenizerProcessor implements Processor {
+public class CamelSplitterProcessor implements Processor {
 
     private final Tokenizer tokenizer = new OpenAiTokenizer(GPT_3_5_TURBO);
     private final int maxTokens = 50;
